@@ -1,20 +1,58 @@
-# Reproducible Research: Peer Assessment 1
+## Reproducible Research: Peer Assessment 1
 
 
-## Loading and preprocessing the data
+This assignment is broken into 5 parts, each part will deal with different
+aspects of reproducible research.
+
+
+### Loading and preprocessing the data
+
+To load in the csv file I used the `read.csv()` function. I then used the 
+`transform()` function to convert the date field from a factor to a date type.
+
+```{r}
+activity <- read.csv(file="activity.csv")
+activity <- transform(activity, date = as.Date(date))
+```
+
+### What is mean total number of steps taken per day?
+
+Once the data is in the correct format I can now create some exploratory graphs
+using the `ggplot()` function in the `ggplot2` package. This needs to be loaded 
+into R using the `library()` function.
+
+```{r}
+library(ggplot2)
+aggData <- aggregate(steps ~ date, data=activity, FUN=sum)
+ggplot(aggData, aes(steps)) + geom_histogram(binwidth=600)
+```
+
+The mean and median can be calculated using the `aggData` variable we created 
+and the `mean()` and `median()` functions as follows;
+
+```{r}
+meanSteps <- mean(aggData$steps)
+meanSteps
+medianSteps <- median(aggData$steps)
+medianSteps
+```
+
+### What is the average daily activity pattern?
+```{r}
+aggDataInterval <- aggregate(steps ~ interval, data=activity, FUN=mean)
+ggplot(aggDataInterval, aes(interval,steps)) + geom_line() + 
+        xlab("5 minute interval") + ylab("Average number of steps")
+```
+
+The 5-minute interval with the highest average number of steps can be found
+using the `which.max()` function and indexing into the aggregate data frame;
+
+```{r}
+aggDataInterval[which.max(aggDataInterval$steps), ]
+```
+
+### Imputing missing values
 
 
 
-## What is mean total number of steps taken per day?
-
-
-
-## What is the average daily activity pattern?
-
-
-
-## Imputing missing values
-
-
-
-## Are there differences in activity patterns between weekdays and weekends?
+### Are there differences in activity patterns between weekdays and weekends?
