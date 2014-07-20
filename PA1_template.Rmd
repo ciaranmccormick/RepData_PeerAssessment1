@@ -95,3 +95,19 @@ values were excluded from the first calculation.
 
 ### Are there differences in activity patterns between weekdays and weekends?
 
+Here we will continue using the `activity2` data with the filled in `NA` values.
+
+```{r}
+weekend = c("Saturday", "Sunday")
+weekFact <- factor(c("weekend", "weekday")) 
+activity2$week <- weekFact[(as.numeric(weekdays(activity2$date) %in% weekend)+1)]
+```
+
+We'll use the `lattice` package to make a panel plot for the number of steps on
+the weekend days versus weekdays.
+
+```{r}
+library(lattice)
+xyplot(activity2$steps ~ activity2$interval | activity2$week, layout=c(1,2), 
+        type="l",xlab="Interval",ylab="Number of steps")
+```
