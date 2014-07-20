@@ -53,6 +53,45 @@ aggDataInterval[which.max(aggDataInterval$steps), ]
 
 ### Imputing missing values
 
+Here is the total number of `NA` values in the dataset.
 
+```{r}
+sapply(activity, function(x)sum(is.na(x)))
+```
+
+Begin by copying the `activity` data frame into a new varible called 
+`activity2`. We can fill the missing values by using the 5 minute interval mean. 
+We create a new column in the `activity2` data frame that will hold the interval
+means and then replace the `NA` values in the `steps` column with these means.
+We can see using the `sapply` function that the `NA` are gone.
+
+```{r}
+activity2 <- activity
+activity2$meanInterval <- ave(activity$steps, activity$interval, FUN=function(x) mean(x, na.rm=T))
+activity2$steps[is.na(activity2$steps)] <- activity2$meanInterval
+sapply(activity2, function(x)sum(is.na(x)))
+```
+
+New histogram using the filled in values.
+
+```{r}
+aggData2 <- aggregate(steps ~ date, data=activity2, FUN=sum)
+ggplot(aggData2, aes(steps)) + geom_histogram(binwidth=600)
+```
+
+The mean and median can be calculated using the `aggData2` variable we created 
+and the `mean()` and `median()` functions as follows;
+
+```{r}
+meanSteps2 <- mean(aggData2$steps)
+meanSteps2
+medianSteps2 <- median(aggData2$steps)
+medianSteps2
+```
+
+These values do not differ significantly from the first values calculated since
+we are simply replacing the `NA` values with mean and median. These missing
+values were excluded from the first calculation.
 
 ### Are there differences in activity patterns between weekdays and weekends?
+
